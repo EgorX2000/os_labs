@@ -2,9 +2,9 @@
 
 #include <iostream>
 
+HANDLE hFile = NULL;
 HANDLE g_hChildStd_OUT_Rd = NULL;
 HANDLE g_hChildStd_OUT_Wr = NULL;
-HANDLE hFile = NULL;
 
 int CreateChildProcess();
 
