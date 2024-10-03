@@ -51,39 +51,43 @@ int main() {
         }
 
         int div = 0;
-        while (1) {
-            if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
-                if (readBytes == 0) {
-                    exit(1);
-                }
-
-                buffer[readBytes] = 0;
-
-                if ('0' <= buffer[0] && buffer[0] <= '9') {
-                    div = div * 10 + (buffer[0] - '0');
-                } else if (buffer[0] == ' ') {
-                    if (div == 0) {
+        if (buffer[0] == ' ') {
+            while (1) {
+                if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
+                    if (readBytes == 0) {
                         exit(1);
                     }
-                    res /= div;
-                    div = 0;
-                } else if (buffer[0] == '\r') {
-                    if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
-                        if (readBytes == 0) {
+
+                    buffer[readBytes] = 0;
+
+                    if ('0' <= buffer[0] && buffer[0] <= '9') {
+                        div = div * 10 + (buffer[0] - '0');
+                    } else if (buffer[0] == ' ') {
+                        if (div == 0) {
                             exit(1);
                         }
-
-                        if (buffer[0] == '\n') {
-                            if (div == 0) {
+                        res /= div;
+                        div = 0;
+                    } else if (buffer[0] == '\r') {
+                        if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
+                            if (readBytes == 0) {
                                 exit(1);
                             }
-                            res /= div;
-                            div = 0;
 
-                            WriteFile(writeHandle, &res, sizeof(int),
-                                      &writtenBytes, NULL);
+                            if (buffer[0] == '\n') {
+                                if (div == 0) {
+                                    exit(1);
+                                }
+                                res /= div;
+                                div = 0;
 
-                            break;
+                                WriteFile(writeHandle, &res, sizeof(int),
+                                          &writtenBytes, NULL);
+
+                                break;
+                            } else {
+                                exit(1);
+                            }
                         } else {
                             exit(1);
                         }
@@ -93,8 +97,6 @@ int main() {
                 } else {
                     exit(1);
                 }
-            } else {
-                exit(1);
             }
         }
     }
