@@ -1,0 +1,5 @@
+# ninja log v6
+7	1716	7496660465444442	CMakeFiles/child.dir/ChildProcess.cpp.obj	260d0e2ea168ca84
+3	1729	7496660465386960	CMakeFiles/main.dir/ParentProcess.cpp.obj	2e8550aa6e39c749
+1720	1813	7496660482558117	child.exe	124bdf44d5d6c66c
+1730	1899	7496660482640613	main.exe	af633474577dd53d

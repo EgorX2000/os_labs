@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <windows.h>
-
-#include <sstream>
-#include <string>
 
 int main() {
     HANDLE readHandle = GetStdHandle(STD_INPUT_HANDLE);

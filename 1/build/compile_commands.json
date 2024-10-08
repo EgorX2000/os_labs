@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Users/aSUS/Documents/C++/os_labs/1/build",
+  "command": "C:\\Compilers\\mingw64\\bin\\c++.exe -g -std=gnu++17 -o CMakeFiles\\main.dir\\ParentProcess.cpp.obj -c C:\\Users\\aSUS\\Documents\\C++\\os_labs\\1\\ParentProcess.cpp",
+  "file": "C:\\Users\\aSUS\\Documents\\C++\\os_labs\\1\\ParentProcess.cpp",
+  "output": "CMakeFiles\\main.dir\\ParentProcess.cpp.obj"
+},
+{
+  "directory": "C:/Users/aSUS/Documents/C++/os_labs/1/build",
+  "command": "C:\\Compilers\\mingw64\\bin\\c++.exe -g -std=gnu++17 -o CMakeFiles\\child.dir\\ChildProcess.cpp.obj -c C:\\Users\\aSUS\\Documents\\C++\\os_labs\\1\\ChildProcess.cpp",
+  "file": "C:\\Users\\aSUS\\Documents\\C++\\os_labs\\1\\ChildProcess.cpp",
+  "output": "CMakeFiles\\child.dir\\ChildProcess.cpp.obj"
+}
+]

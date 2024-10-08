@@ -1,0 +1,4 @@
+C:/Users/aSUS/Documents/C++/os_labs/1/build/CMakeFiles/main.dir
+C:/Users/aSUS/Documents/C++/os_labs/1/build/CMakeFiles/child.dir
+C:/Users/aSUS/Documents/C++/os_labs/1/build/CMakeFiles/edit_cache.dir
+C:/Users/aSUS/Documents/C++/os_labs/1/build/CMakeFiles/rebuild_cache.dir

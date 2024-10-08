@@ -6,8 +6,6 @@ HANDLE hFile = NULL;
 HANDLE g_hChildStd_OUT_Rd = NULL;
 HANDLE g_hChildStd_OUT_Wr = NULL;
 
-int CreateChildProcess();
-
 int main() {
     std::string filename;
     std::cout << "Enter filename: ";
