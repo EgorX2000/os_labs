@@ -4,7 +4,7 @@
 #include <windows.h>
 
 #define ARRAY_SIZE 10000
-#define MAX_ARRAYS 10000
+#define MAX_ARRAYS 100000
 
 typedef struct {
     int* result;
@@ -25,8 +25,15 @@ DWORD WINAPI SumArrays(LPVOID param) {
     return 0;
 }
 
+double getTime() {
+    LARGE_INTEGER freq, val;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&val);
+    return (double)val.QuadPart / (double)freq.QuadPart;
+}
+
 int main(int argc, char* argv[]) {
-    clock_t start_time = clock();
+    double start_time = getTime();
 
     if (argc < 2) {
         printf("Usage: %s <max_threads>\n", argv[0]);
@@ -41,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     int** arrays = (int**)malloc(MAX_ARRAYS * sizeof(int*));
     // FILE* data = fopen("data.txt", "w");
-    srand(time(NULL));
+    // srand(time(NULL));
     for (int i = 0; i < MAX_ARRAYS; i++) {
         arrays[i] = (int*)malloc(ARRAY_SIZE * sizeof(int));
         for (int j = 0; j < ARRAY_SIZE; j++) {
@@ -55,7 +62,7 @@ int main(int argc, char* argv[]) {
 
     int threads_to_use = (MAX_ARRAYS < max_threads) ? MAX_ARRAYS : max_threads;
 
-    int arrays_per_thread = threads_to_use / max_threads;
+    int arrays_per_thread = MAX_ARRAYS / threads_to_use;
     int remaining_arrays = MAX_ARRAYS % threads_to_use;
 
     HANDLE* threads = (HANDLE*)malloc(threads_to_use * sizeof(HANDLE));
@@ -67,7 +74,6 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < threads_to_use; i++) {
         thread_data[i].result = result;
         thread_data[i].arrays = arrays;
-        thread_data[i].start_index = current_array;
         thread_data[i].array_length = ARRAY_SIZE;
 
         thread_data[i].start_index = current_array;
@@ -100,7 +106,7 @@ int main(int argc, char* argv[]) {
     free(threads);
     free(thread_data);
 
-    printf("%f\n", (double)(clock() - start_time) / CLOCKS_PER_SEC);
+    printf("%0.2lfms\n", (getTime() - start_time) * 1000);
 
     return 0;
 }
