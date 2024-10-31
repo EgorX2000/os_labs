@@ -3,7 +3,7 @@
 #include <time.h>
 #include <windows.h>
 
-#define ARRAY_SIZE 10000
+#define ARRAY_SIZE 20000
 #define MAX_ARRAYS 100000
 
 typedef struct {
