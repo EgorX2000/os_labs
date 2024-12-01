@@ -5,6 +5,7 @@
 #define MAPPED_FILE_NAME "SharedMemory"
 #define BUFFER_SIZE 1024
 #define EXIT_CHILD            \
+    std::cout << std::endl;   \
     pBuffer->flag = -1;       \
     UnmapViewOfFile(pBuffer); \
     CloseHandle(hMapFile);    \
