@@ -1,51 +1,50 @@
 #include <windows.h>
 
-#include <fstream>
 #include <iostream>
 
+#define MAPPED_FILE_NAME "SharedMemory"
+#define BUFFER_SIZE 1024
+#define EXIT_CHILD            \
+    pBuffer->flag = -1;       \
+    UnmapViewOfFile(pBuffer); \
+    CloseHandle(hMapFile);    \
+    exit(1);
+
+struct SharedMemory {
+    char data[BUFFER_SIZE];
+    short flag;
+};
+
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Не указано имя отображаемой памяти." << std::endl;
-        return 1;
+    HANDLE hMapFile =
+        OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, MAPPED_FILE_NAME);
+
+    if (!hMapFile) {
+        std::cerr << "fail c1" << std::endl;
+        return -1;
     }
 
-    const char* mappingName = argv[1];
+    SharedMemory* pBuffer = (SharedMemory*)MapViewOfFile(
+        hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, BUFFER_SIZE);
 
-    HANDLE hMapFile = OpenFileMappingA(FILE_MAP_READ, FALSE, mappingName);
-
-    if (hMapFile == NULL) {
-        std::cerr << "Не удалось открыть отображение файла." << std::endl;
-        return 1;
-    }
-
-    LPVOID pBuffer = MapViewOfFile(hMapFile, FILE_MAP_READ, 0, 0, 0);
-
-    if (pBuffer == NULL) {
-        std::cerr << "Не удалось отобразить файл в память." << std::endl;
+    if (!pBuffer) {
+        std::cerr << "fail c2" << std::endl;
         CloseHandle(hMapFile);
-        return 1;
+        return -1;
     }
 
-    const char* filename = static_cast<const char*>(pBuffer);
+    HANDLE readHandle = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD readBytes;
 
-    HANDLE hFile = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, NULL,
-                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-
-    if (hFile == INVALID_HANDLE_VALUE) {
-        std::cerr << "Не удалось открыть файл: " << filename << std::endl;
-        UnmapViewOfFile(pBuffer);
-        CloseHandle(hMapFile);
-        return 1;
-    }
-
-    DWORD readBytes, writtenBytes;
     char buffer[1];
+    std::string written;
+
     while (1) {
         int res = 0;
         while (1) {
             if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
                 if (readBytes == 0) {
-                    exit(1);
+                    EXIT_CHILD;
                 }
 
                 buffer[readBytes] = 0;
@@ -57,25 +56,30 @@ int main(int argc, char* argv[]) {
                 } else if (buffer[0] == '\r') {
                     if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
                         if (readBytes == 0) {
-                            exit(1);
+                            EXIT_CHILD;
                         }
 
                         if (buffer[0] == '\n') {
-                            WriteFile(writeHandle, &res, sizeof(int),
-                                      &writtenBytes, NULL);
+                            while (pBuffer->flag == 1) {
+                                continue;
+                            }
+                            written = std::to_string(res);
+                            memcpy(pBuffer->data, written.c_str(),
+                                   (written.size() + 1) * sizeof(char));
+                            pBuffer->flag = 1;
 
                             break;
                         } else {
-                            exit(1);
+                            EXIT_CHILD;
                         }
                     } else {
-                        exit(1);
+                        EXIT_CHILD;
                     }
                 } else {
-                    exit(1);
+                    EXIT_CHILD;
                 }
             } else {
-                exit(1);
+                EXIT_CHILD;
             }
         }
 
@@ -84,7 +88,7 @@ int main(int argc, char* argv[]) {
             while (1) {
                 if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
                     if (readBytes == 0) {
-                        exit(1);
+                        EXIT_CHILD;
                     }
 
                     buffer[readBytes] = 0;
@@ -93,42 +97,51 @@ int main(int argc, char* argv[]) {
                         div = div * 10 + (buffer[0] - '0');
                     } else if (buffer[0] == ' ') {
                         if (div == 0) {
-                            exit(1);
+                            EXIT_CHILD;
                         }
                         res /= div;
                         div = 0;
                     } else if (buffer[0] == '\r') {
                         if (ReadFile(readHandle, buffer, 1, &readBytes, NULL)) {
                             if (readBytes == 0) {
-                                exit(1);
+                                EXIT_CHILD;
                             }
 
                             if (buffer[0] == '\n') {
                                 if (div == 0) {
-                                    exit(1);
+                                    EXIT_CHILD;
                                 }
                                 res /= div;
                                 div = 0;
 
-                                WriteFile(writeHandle, &res, sizeof(int),
-                                          &writtenBytes, NULL);
+                                while (pBuffer->flag == 1) {
+                                    continue;
+                                }
+                                written = std::to_string(res);
+                                memcpy(pBuffer->data, written.c_str(),
+                                       (written.size() + 1) * sizeof(char));
+                                pBuffer->flag = 1;
 
                                 break;
                             } else {
-                                exit(1);
+                                EXIT_CHILD;
                             }
                         } else {
-                            exit(1);
+                            EXIT_CHILD;
                         }
                     } else {
-                        exit(1);
+                        EXIT_CHILD;
                     }
                 } else {
-                    exit(1);
+                    EXIT_CHILD;
                 }
             }
         }
     }
+
+    pBuffer->flag = -1;
+    UnmapViewOfFile(pBuffer);
+    CloseHandle(hMapFile);
 
     return 0;
 }
