@@ -7,7 +7,8 @@
 
 struct SharedMemory {
     char data[BUFFER_SIZE];
-    short flag;
+    bool flag;
+    bool exit;
 };
 
 int main() {
@@ -46,7 +47,8 @@ int main() {
         return -1;
     }
 
-    pBuffer->flag = 0;
+    pBuffer->flag = false;
+    pBuffer->exit = false;
 
     std::string szCmdline = "child.exe";
     PROCESS_INFORMATION piProcInfo;
@@ -69,10 +71,10 @@ int main() {
         return -1;
     }
 
-    while (pBuffer->flag != -1) {
-        if (pBuffer->flag == 1) {
+    while (pBuffer->exit == false) {
+        if (pBuffer->flag == true) {
             std::cout << static_cast<char*>(pBuffer->data) << std::endl;
-            pBuffer->flag = 0;
+            pBuffer->flag = false;
         }
     }
 

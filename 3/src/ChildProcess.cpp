@@ -5,15 +5,15 @@
 #define MAPPED_FILE_NAME "SharedMemory"
 #define BUFFER_SIZE 1024
 #define EXIT_CHILD            \
-    std::cout << std::endl;   \
-    pBuffer->flag = -1;       \
+    pBuffer->exit = true;     \
     UnmapViewOfFile(pBuffer); \
     CloseHandle(hMapFile);    \
     exit(1);
 
 struct SharedMemory {
     char data[BUFFER_SIZE];
-    short flag;
+    bool flag;
+    bool exit;
 };
 
 int main(int argc, char* argv[]) {
@@ -61,13 +61,13 @@ int main(int argc, char* argv[]) {
                         }
 
                         if (buffer[0] == '\n') {
-                            while (pBuffer->flag == 1) {
+                            while (pBuffer->flag == true) {
                                 continue;
                             }
                             written = std::to_string(res);
                             memcpy(pBuffer->data, written.c_str(),
                                    (written.size() + 1) * sizeof(char));
-                            pBuffer->flag = 1;
+                            pBuffer->flag = true;
 
                             break;
                         } else {
@@ -115,13 +115,13 @@ int main(int argc, char* argv[]) {
                                 res /= div;
                                 div = 0;
 
-                                while (pBuffer->flag == 1) {
+                                while (pBuffer->flag == true) {
                                     continue;
                                 }
                                 written = std::to_string(res);
                                 memcpy(pBuffer->data, written.c_str(),
                                        (written.size() + 1) * sizeof(char));
-                                pBuffer->flag = 1;
+                                pBuffer->flag = true;
 
                                 break;
                             } else {
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    pBuffer->flag = -1;
+    pBuffer->exit = true;
     UnmapViewOfFile(pBuffer);
     CloseHandle(hMapFile);
 

@@ -3,8 +3,8 @@
 #include <time.h>
 #include <windows.h>
 
-#define ARRAY_SIZE 20000
-#define MAX_ARRAYS 100000
+#define ARRAY_SIZE 10
+#define MAX_ARRAYS 10
 
 typedef struct {
     int* result;
@@ -47,15 +47,15 @@ int main(int argc, char* argv[]) {
     }
 
     int** arrays = (int**)malloc(MAX_ARRAYS * sizeof(int*));
-    // FILE* data = fopen("data.txt", "w");
-    // srand(time(NULL));
+    FILE* data = fopen("data.txt", "w");
+    srand(time(NULL));
     for (int i = 0; i < MAX_ARRAYS; i++) {
         arrays[i] = (int*)malloc(ARRAY_SIZE * sizeof(int));
         for (int j = 0; j < ARRAY_SIZE; j++) {
             arrays[i][j] = rand() % 100;
-            // fprintf(data, "%d ", arrays[i][j]);
+            fprintf(data, "%d ", arrays[i][j]);
         }
-        // fputc('\n', data);
+        fputc('\n', data);
     }
 
     int* result = (int*)calloc(ARRAY_SIZE, sizeof(int));
@@ -89,7 +89,6 @@ int main(int argc, char* argv[]) {
 
     WaitForMultipleObjects(threads_to_use, threads, TRUE, INFINITE);
 
-    /*
     for (int i = 0; i < ARRAY_SIZE; i++) {
         printf("%d ", result[i]);
     }
@@ -99,7 +98,6 @@ int main(int argc, char* argv[]) {
         CloseHandle(threads[i]);
         free(arrays[i]);
     }
-    */
 
     free(arrays);
     free(result);
