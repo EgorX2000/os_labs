@@ -29,13 +29,13 @@ public:
             return;
         }
 
-        // Проверка доступности родительского узла
+
         if (parentId != -1 && !isNodeAvailable(parentId)) {
             std::cout << "Error: Parent is unavailable\n";
             return;
         }
 
-        // Выбор минимального поддерева для добавления нового узла
+
         int selectedParent = (parentId != -1) ? parentId : findMinimalSubtree();
 
         std::string address = "tcp://127.0.0.1:*";
@@ -43,7 +43,7 @@ public:
         nodeSocket.bind(address);
         address = nodeSocket.get(zmq::sockopt::last_endpoint);
 
-        // Создаем новый процесс
+
         STARTUPINFO si = { sizeof(STARTUPINFO) };
         PROCESS_INFORMATION pi;
 
@@ -136,7 +136,7 @@ private:
     }
 
     int findMinimalSubtree() {
-        // Простейший алгоритм для нахождения минимального поддерева
+
         int minId = -1;
         size_t minSize = SIZE_MAX;
         for (const auto& [parentId, children] : tree) {
