@@ -1,0 +1,5 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(2175,5): warning MSB9008: The referenced project '..\common\common.vcxproj' does not exist.
+  main.cpp
+  node.vcxproj -> D:\Documents\C++\os_labs\5-7\x64\Debug\node.exe
+  "pwsh.exe" не является внутренней или внешней
+  командой, исполняемой программой или пакетным файлом.

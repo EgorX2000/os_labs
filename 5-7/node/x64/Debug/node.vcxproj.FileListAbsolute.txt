@@ -1,0 +1,4 @@
+C:\Users\Ivan\source\repos\oslab5_7\node\x64\Debug\node.vcxproj.Up2Date
+C:\Users\MegaComp\Downloads\OS_Labs-main\lab5-7\node\x64\Debug\node.vcxproj.Up2Date
+D:\Documents\C++\os_labs\lab5-7\node\x64\Debug\node.vcxproj.Up2Date
+D:\Documents\C++\os_labs\5-7\node\x64\Debug\node.vcxproj.Up2Date
