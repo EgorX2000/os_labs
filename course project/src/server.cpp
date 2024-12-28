@@ -27,7 +27,6 @@ class GameServer {
         std::cout << "Starting server...\n";
 
         while (true) {
-            // Создаем pipe
             HANDLE pipe = CreateNamedPipe(
                 pipeName.c_str(), PIPE_ACCESS_DUPLEX,
                 PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
@@ -41,10 +40,10 @@ class GameServer {
             std::cout << "Waiting for client connection...\n";
             if (ConnectNamedPipe(pipe, NULL) != FALSE) {
                 std::cout << "Client connected.\n";
-                // Создаем новый поток для обработки клиента
+
                 std::thread clientThread(&GameServer::handleClient, this, pipe);
-                clientThread.detach();  // Отсоединяем поток для его автономного
-                                        // выполнения
+                clientThread.detach();
+
             } else {
                 std::cerr << "Failed to connect to client.\n";
             }
@@ -57,7 +56,6 @@ class GameServer {
         DWORD bytesRead;
 
         while (true) {
-            // Чтение сообщения от клиента
             if (!ReadFile(pipe, buffer, sizeof(buffer), &bytesRead, NULL) ||
                 bytesRead == 0) {
                 std::cerr << "Failed to read from client. Exiting...\n";
@@ -72,7 +70,6 @@ class GameServer {
 
             ss >> command;
 
-            // Обработка запроса клиента
             if (command == "create_game") {
                 std::string gameName, playerCountString;
                 ss >> gameName >> playerCountString;
@@ -98,7 +95,6 @@ class GameServer {
     void createGame(HANDLE pipe, const std::string& gameName, int playerCount) {
         std::cout << "Creating a new game...\n";
 
-        // Создаем игру
         Game newGame;
         newGame.name = gameName;
         newGame.playerCount = playerCount;
@@ -113,20 +109,17 @@ class GameServer {
     void joinGame(HANDLE pipe, const std::string& gameName) {
         std::cout << "Joining a game...\n";
 
-        // Ищем игру
         Game* game = findGameByName(gameName);
         if (!game) {
             WriteFile(pipe, "Game not found.\n", 15, NULL, NULL);
             return;
         }
 
-        // Проверяем, не полна ли игра
         if (game->isFull) {
             WriteFile(pipe, "Game is full.\n", 13, NULL, NULL);
             return;
         }
 
-        // Добавляем игрока
         game->players.push_back("Player" +
                                 std::to_string(game->players.size() + 1));
         if (game->players.size() == game->playerCount) {
@@ -140,7 +133,7 @@ class GameServer {
 
     void searchGame(HANDLE pipe) {
         std::cout << "Searching for a game...\n";
-        // Логика поиска игры
+
         std::string response = "Games available:\n";
         for (const auto& game : games) {
             response += game.name +
@@ -154,7 +147,6 @@ class GameServer {
                    const std::string& guess) {
         std::cout << "Making a guess...\n";
 
-        // Находим игру
         Game* game = findGameByName(gameName);
         if (!game || !game->isStarted) {
             WriteFile(pipe, "Game not found or not started.\n", 30, NULL, NULL);
@@ -200,8 +192,6 @@ class GameServer {
 
     std::string checkGuess(const std::string& secret,
                            const std::string& guess) {
-        // std::cout << secret << " " << guess << std::endl;
-
         int bulls = 0, cows = 0;
         std::vector<bool> secret_used(4, false), guess_used(4, false);
 

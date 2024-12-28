@@ -26,7 +26,6 @@ class GameClient {
     void interactWithServer(HANDLE pipe) {
         std::string choice;
         while (true) {
-            // Показ меню и получение выбора
             std::cout << "Choose an option:\n1. Create game\n2. Join game\n3. "
                          "Search game\n4. Make guess\n5. Exit\n";
             std::getline(std::cin, choice);
@@ -57,7 +56,7 @@ class GameClient {
 
                 sendRequest(pipe, request);
             } else if (choice == "5") {
-                break;  // Выход из программы
+                break;
             } else {
                 std::cerr << "Invalid choice.\n";
             }
@@ -69,10 +68,8 @@ class GameClient {
     void sendRequest(HANDLE pipe, const std::string& request) {
         DWORD bytesWritten;
 
-        // Отправка запроса серверу
         WriteFile(pipe, request.c_str(), request.length(), &bytesWritten, NULL);
 
-        // Ожидание ответа от сервера
         char buffer[512];
         DWORD bytesRead;
         if (ReadFile(pipe, buffer, sizeof(buffer), &bytesRead, NULL)) {
