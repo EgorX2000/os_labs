@@ -187,6 +187,9 @@ class GameServer {
         for (int i = 0; i < 4; ++i) {
             number += std::to_string(dis(gen));
         }
+
+        std::cout << number << std::endl;
+
         return number;
     }
 
